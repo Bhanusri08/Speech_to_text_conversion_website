@@ -1,60 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cafe Menu</title>
-    <link href="styles.css" rel="stylesheet"/>
-  </head>
-  <body>
-    <div class="menu">
-      <main>
-        <h1>CAMPER CAFE</h1>
-        <p class="established">Est. 2020</p>
-        <hr>
-        <section>
-          <h2>Coffee</h2>
-          <img src="https://cdn.freecodecamp.org/curriculum/css-cafe/coffee.jpg" alt="coffee icon"/>
-          <article class="item">
-            <p class="flavor">French Vanilla</p><p class="price">3.00</p>
-          </article>
-          <article class="item">
-            <p class="flavor">Caramel Macchiato</p><p class="price">3.75</p>
-          </article>
-          <article class="item">
-            <p class="flavor">Pumpkin Spice</p><p class="price">3.50</p>
-          </article>
-          <article class="item">
-            <p class="flavor">Hazelnut</p><p class="price">4.00</p>
-          </article>
-          <article class="item">
-            <p class="flavor">Mocha</p><p class="price">4.50</p>
-          </article>
-        </section>
-        <section>
-          <h2>Desserts</h2>
-          <img src="https://cdn.freecodecamp.org/curriculum/css-cafe/pie.jpg" alt="pie icon"/>
-          <article class="item">
-            <p class="dessert">Donut</p><p class="price">1.50</p>
-          </article>
-          <article class="item">
-            <p class="dessert">Cherry Pie</p><p class="price">2.75</p>
-          </article>
-          <article class="item">
-            <p class="dessert">Cheesecake</p><p class="price">3.00</p>
-          </article>
-          <article class="item">
-            <p class="dessert">Cinnamon Roll</p><p class="price">2.50</p>
-          </article>
-        </section>
-      </main>
-      <hr class="bottom-line">
-      <footer>
-        <p>
-          <a href="https://www.freecodecamp.org" target="_blank">Visit our website</a>
-        </p>
-        <p class="address">123 Free Code Camp Drive</p>
-      </footer>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid black;
+            border-radius: 8px;
+            background-color: rgb(103, 164, 218);
+            padding: 30px 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .heading {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        select {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        #startBtn {
+            border-radius: 7px;
+            padding: 10px 20px;
+            background-color: black;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        #startBtn:hover {
+            background-color: #444;
+            color: #fff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1 class="heading">Speech to Text</h1>
+        <select id="languageSelect">
+            <option value="en-US">English (US)</option>
+            <option value="hi-IN">Hindi (India)</option>
+            <option value="te-IN">Telugu (India)</option>
+            <option value="ta-IN">Tamil (India)</option>
+            <option value="kn-IN">Kannada (India)</option>
+            <option value="ml-IN">Malayalam (India)</option>
+            <option value="mr-IN">Marathi (India)</option>
+            <option value="bn-IN">Bengali (India)</option>
+            <option value="gu-IN">Gujarati (India)</option>
+        </select>
+        <div class="controls">
+            <button id="startBtn" aria-label="Start voice recording">Start Recording</button>
+        </div>
+        <p id="result">Choose a language and start speaking!</p>
     </div>
-  </body>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const result = document.getElementById('result');
+        const languageSelect = document.getElementById('languageSelect');
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        // Update the recognition language dynamically
+        languageSelect.addEventListener('change', () => {
+            recognition.lang = languageSelect.value;
+        });
+
+        recognition.onresult = (event) => {
+            let transcript = "";
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            result.textContent = "You said: " + transcript;
+        };
+
+        recognition.onerror = (event) => {
+            result.textContent = "Error: " + event.error;
+        };
+
+        startBtn.addEventListener("click", () => {
+            recognition.lang = languageSelect.value;
+            recognition.start();
+            result.textContent = "Listening...";
+        });
+
+        recognition.onspeechend = () => {
+            recognition.stop();
+            result.textContent += " (Stopped)";
+        };
+    </script>
+</body>
 </html>
